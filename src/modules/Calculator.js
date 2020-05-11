@@ -1,4 +1,10 @@
 class Calculator {
+  static _thousandSeparator(value) {
+    const parts = String(value).split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.join(".");
+  }
+
   // taken from https://gist.github.com/pies/4166888#file-excelformulas-js-L16-L30
   static _pmt(ir, nper, pv, fv, type) {
     if (!fv) fv = 0;
@@ -90,13 +96,17 @@ class Calculator {
       const eachMonthData = {
         count: ind + 1,
         ir: thisMonthIr.toFixed(3),
-        pv: pv.toFixed(2),
-        paid: (initialPaid + thisMonthInterest).toFixed(2),
-        initialPaid: initialPaid.toFixed(2),
-        interestPaid: thisMonthInterest.toFixed(2),
-        totalInitialPaid: totalInitialPaid.toFixed(2),
-        totalInterestPaid: totalInterestPaid.toFixed(2),
-        totalPaid: totalPaid.toFixed(2)
+        pv: this._thousandSeparator(pv.toFixed(2)),
+        paid: this._thousandSeparator(
+          (initialPaid + thisMonthInterest).toFixed(2)
+        ),
+        initialPaid: this._thousandSeparator(initialPaid.toFixed(2)),
+        interestPaid: this._thousandSeparator(thisMonthInterest.toFixed(2)),
+        totalInitialPaid: this._thousandSeparator(totalInitialPaid.toFixed(2)),
+        totalInterestPaid: this._thousandSeparator(
+          totalInterestPaid.toFixed(2)
+        ),
+        totalPaid: this._thousandSeparator(totalPaid.toFixed(2))
       };
 
       if (pv === 0) {

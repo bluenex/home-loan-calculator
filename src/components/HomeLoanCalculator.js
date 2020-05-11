@@ -5,13 +5,75 @@ import Calculator from "../modules/Calculator";
 import Table from "./Table";
 
 const Container = styled.div`
+  color: #333;
+
+  .align-box {
+    width: max-content;
+    margin: 0 auto;
+    text-align: left;
+    margin-bottom: 1em;
+  }
+
+  hr {
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    width: 85%;
+  }
+
+  form {
+    font-size: 1.15em;
+    text-align: center;
+    margin-bottom: 1em;
+
+    input {
+      font-size: 0.75em;
+      min-width: 320px;
+      width: 100%;
+      /* border: none; */
+      border: 2px solid #ddd;
+      border-radius: 3px;
+      padding: 5px;
+      margin-bottom: 0.45em;
+      margin-top: 0.25em;
+    }
+
+    label {
+      padding-right: 8px;
+    }
+
+    button {
+      border: 1px solid #666;
+      background-color: #ccc;
+      color: #000;
+
+      padding: 5px 12px;
+      border-radius: 3px;
+      font-size: 0.95em;
+      cursor: pointer;
+      outline: none;
+
+      :hover {
+        background-color: #ddd;
+        color: #000;
+      }
+
+      :active {
+        background: #333;
+        color: #fff;
+      }
+    }
+  }
+
   table {
     // for responsive rendering
     display: block;
     overflow-x: scroll;
+    font-variant-numeric: tabular-nums;
 
     tbody {
       td {
+        padding: 5px 10px;
+
         :first-child {
           text-align: center;
         }
@@ -24,7 +86,7 @@ const Container = styled.div`
 
     th {
       &:first-child {
-        padding-left: 1em;
+        text-align: center;
       }
       h4 {
         margin: 0;
@@ -32,17 +94,10 @@ const Container = styled.div`
     }
     tr {
       :not(:nth-child(odd)) {
-        background-color: #f4f4f4;
+        background-color: #e6e6e6;
       }
       td {
         border: none;
-        /* padding is removed in layout */
-        &:first-child {
-          padding-left: 1em;
-        }
-        &:last-child {
-          padding-right: 1em;
-        }
       }
     }
   }
@@ -57,39 +112,39 @@ const HomeLoanCalculator = () => {
   const columns = useMemo(
     () => [
       {
-        Header: "count",
+        Header: "งวดที่",
         accessor: "count"
       },
       {
-        Header: "ir",
+        Header: "อัตราดอกเบี้ย",
         accessor: "ir"
       },
       {
-        Header: "pv",
+        Header: "เงินต้นคงเหลือ",
         accessor: "pv"
       },
       {
-        Header: "paid",
+        Header: "ค่างวด",
         accessor: "paid"
       },
       {
-        Header: "initialPaid",
+        Header: "เป็นเงินต้น",
         accessor: "initialPaid"
       },
       {
-        Header: "interestPaid",
+        Header: "เป็นดอกเบี้ย",
         accessor: "interestPaid"
       },
       {
-        Header: "totalInitialPaid",
+        Header: "เงินต้นสะสม",
         accessor: "totalInitialPaid"
       },
       {
-        Header: "totalInterestPaid",
+        Header: "ดอกเบี้ยสะสม",
         accessor: "totalInterestPaid"
       },
       {
-        Header: "totalPaid",
+        Header: "สุทธิ",
         accessor: "totalPaid"
       }
     ],
@@ -98,15 +153,14 @@ const HomeLoanCalculator = () => {
 
   const data = useMemo(() => paymentTableData, [paymentTableData]);
 
-  // const watchAll = watch();
-
-  // useEffect(() => {
-  //   console.log(watchAll);
-  // }, [watchAll]);
+  const watchYear = watch("year");
+  const watchInstallment = watch("installment");
+  const lastInstallmentObj =
+    paymentTableData.length > 0 &&
+    paymentTableData[paymentTableData.length - 1];
 
   return (
     <Container>
-      <h1>Home Loan Calculator</h1>
       <form
         onSubmit={handleSubmit(data => {
           const {
@@ -177,6 +231,8 @@ const HomeLoanCalculator = () => {
               }
 
               setPaymentTableData(tableData);
+            } else {
+              setPaymentTableData([]);
             }
           } else {
             setExpectedInstallment(null);
@@ -184,41 +240,102 @@ const HomeLoanCalculator = () => {
           }
         })}
       >
-        <div>
-          <label htmlFor="initial">Initial:</label>
-          <input name="initial" type="number" step="any" ref={register()} />
+        <div className="align-box">
+          <h1>Home Loan Calculator</h1>
+          <div>
+            <label htmlFor="initial">ยอดกู้:</label>
+            <br />
+            <input name="initial" type="number" step="any" ref={register()} />
+          </div>
+          <div>
+            <label htmlFor="ir">อัตราดอกเบี้ย (% ต่อปี):</label>
+            <br />
+            <input name="ir" type="number" step="any" ref={register()} />
+          </div>
+          <div>
+            <label htmlFor="year">จำนวนปีที่ผ่อนชำระ:</label>
+            <br />
+            <input name="year" type="number" step="any" ref={register()} />
+          </div>
+          <div>
+            <label htmlFor="installment">เงินค่างวด:</label>
+            <br />
+            <input
+              name="installment"
+              type="number"
+              step="any"
+              ref={register()}
+            />
+          </div>
+          <div>
+            <label htmlFor="installmentSteps">
+              ค่างวดลำดับขั้น (optional):
+            </label>
+            <br />
+            <input
+              name="installmentSteps"
+              type="text"
+              step="any"
+              ref={register()}
+            />
+          </div>
+          <div>
+            <label htmlFor="irSteps">ดอกเบี้ยลำดับขั้น (optional):</label>
+            <br />
+            <input name="irSteps" type="text" step="any" ref={register()} />
+          </div>
         </div>
-        <div>
-          <label htmlFor="ir">Interest Rate (IR):</label>
-          <input name="ir" type="number" step="any" ref={register()} />
-        </div>
-        <div>
-          <label htmlFor="installment">Installment:</label>
-          <input name="installment" type="number" step="any" ref={register()} />
-        </div>
-        <div>
-          <label htmlFor="year">Year to Pay:</label>
-          <input name="year" type="number" step="any" ref={register()} />
-        </div>
-        <div>
-          <label htmlFor="installmentSteps">
-            Installment steps (optional):
-          </label>
-          <input
-            name="installmentSteps"
-            type="text"
-            step="any"
-            ref={register()}
-          />
-        </div>
-        <div>
-          <label htmlFor="irSteps">IR steps (optional):</label>
-          <input name="irSteps" type="text" step="any" ref={register()} />
-        </div>
-        <button type="submit">Calculate</button>
+        <button type="submit">คำนวณ</button>
       </form>
-      <p>PMT: {expectedInstallment}</p>
-      <Table defaultColumns={columns} data={data} />
+      {expectedInstallment ? (
+        <>
+          <hr />
+          <div className="align-box">
+            <h2>ผลการคำนวณ</h2>
+            <h3>ค่างวดต่อเดือนจนครบสัญญา</h3>
+            <p>
+              ค่างวดต่อเดือน (ครบ {watchYear} ปี): ~
+              {Calculator._thousandSeparator(expectedInstallment)} บาท
+            </p>
+            {lastInstallmentObj ? (
+              <>
+                <h3>
+                  ค่างวดที่กำหนดเอง (
+                  {Calculator._thousandSeparator(watchInstallment)} บาท)
+                </h3>
+                <p>
+                  จำนวนงวดทั้งสิ้น: {lastInstallmentObj.count} งวด (
+                  {(lastInstallmentObj.count / 12).toFixed(2)} ปี)
+                </p>
+                <p>
+                  ชำระทั้งสิ้น:{" "}
+                  {lastInstallmentObj.totalPaid.replace(/\.[0-9]+$/, "")} บาท
+                </p>
+                <p>
+                  เป็นเงินต้น:{" "}
+                  {lastInstallmentObj.totalInitialPaid.replace(/\.[0-9]+$/, "")}{" "}
+                  บาท
+                </p>
+                <p>
+                  เป็นดอกเบี้ย:{" "}
+                  {lastInstallmentObj.totalInterestPaid.replace(
+                    /\.[0-9]+$/,
+                    ""
+                  )}{" "}
+                  บาท
+                </p>
+              </>
+            ) : null}
+          </div>
+        </>
+      ) : null}
+      {data.length === 0 ? null : (
+        <>
+          <hr />
+          <h2>ตารางแสดงการชำระ</h2>
+          <Table defaultColumns={columns} data={data} />
+        </>
+      )}
     </Container>
   );
 };
