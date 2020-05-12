@@ -27,8 +27,7 @@ const Container = styled.div`
 
     input {
       font-size: 0.75em;
-      min-width: 320px;
-      width: 100%;
+      min-width: 280px;
       /* border: none; */
       border: 2px solid #ddd;
       border-radius: 3px;
@@ -240,8 +239,8 @@ const HomeLoanCalculator = () => {
           }
         })}
       >
+        <h1>Home Loan Calculator</h1>
         <div className="align-box">
-          <h1>Home Loan Calculator</h1>
           <div>
             <label htmlFor="initial">ยอดกู้:</label>
             <br />
