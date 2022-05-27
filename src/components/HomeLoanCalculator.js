@@ -161,7 +161,7 @@ const HomeLoanCalculator = () => {
   return (
     <Container>
       <form
-        onSubmit={handleSubmit(data => {
+        onSubmit={handleSubmit((data) => {
           const {
             initial,
             ir,
@@ -171,7 +171,7 @@ const HomeLoanCalculator = () => {
             irSteps
           } = data;
 
-          const stepsParser = text =>
+          const stepsParser = (text) =>
             text.split(/;\s?/).reduce((a, c) => {
               const tmp = c.split(/:\s?/);
               return { ...a, [tmp[0]]: Number(tmp[1]) };
@@ -270,7 +270,22 @@ const HomeLoanCalculator = () => {
             <label htmlFor="installmentSteps">
               ค่างวดลำดับขั้น (optional):
             </label>
-            <br />
+            <div style={{ fontSize: "0.75em", margin: 0, padding: 0 }}>
+              ในปีที่ 2-3 (งวดที่่ 13-24) จะชำระด้วยค่างวด x,
+              <br />
+              ตั้งแต่ปีที่ 3 เป็นต้นไป (งวดที่ 25+) จะชำระด้วยค่างวด y
+              <br />
+              <div
+                style={{
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  margin: 0,
+                  padding: "0.5em"
+                }}
+              >
+                `12:x;24:y`
+              </div>
+            </div>
             <input
               name="installmentSteps"
               type="text"
@@ -280,7 +295,22 @@ const HomeLoanCalculator = () => {
           </div>
           <div>
             <label htmlFor="irSteps">ดอกเบี้ยลำดับขั้น (optional):</label>
-            <br />
+            <div style={{ fontSize: "0.75em", margin: 0, padding: 0 }}>
+              ในปีที่ 2-3 (งวดที่่ 13-24) ดอกเบี้ยจะเพิ่มเป็น x,
+              <br />
+              ตั้งแต่ปีที่ 3 เป็นต้นไป (งวดที่ 25+) ดอกเบี้ยจะเพิ่มเป็น y
+              <br />
+              <div
+                style={{
+                  fontWeight: "bold",
+                  textAlign: "center",
+                  margin: 0,
+                  padding: "0.5em"
+                }}
+              >
+                `12:x;24:y`
+              </div>
+            </div>
             <input name="irSteps" type="text" step="any" ref={register()} />
           </div>
         </div>
